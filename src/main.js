@@ -11,11 +11,11 @@ import {generateFilm} from "./mock/film";
 import {getFilterCounts} from "./mock/filter";
 import {generateTopRated, generateTopCommented} from "./mock/extra";
 
-const CARDS_COUNT = 5;
+const FILMS_COUNT_PER_STEP = 5;
 const EXTRA_COUNT = 2;
 const NUM_RATED = 0;
 const NUM_COMMENTED = 1;
-const FILMS_COUNT = 15;
+const FILMS_COUNT = 14;
 
 const films = new Array(FILMS_COUNT).fill().map(generateFilm);
 
@@ -34,11 +34,29 @@ render(siteMain, createFilmsContainer());
 const siteFilmsSection = document.querySelector(`.films`);
 const siteFilmsContainer = document.querySelector(`.films-list__container`);
 
-for (let i = 0; i < CARDS_COUNT; i++) {
-  render(siteFilmsContainer, createFilmCard(films[i]));
+
+for (let i = 0; i < FILMS_COUNT_PER_STEP; i++) {
+  render(siteFilmsContainer, createFilmCard(films[i]), `beforeend`);
 }
 
-render(siteFilmsContainer, createButton(), `afterend`);
+if (films.length > FILMS_COUNT_PER_STEP) {
+  let renderedTaskCount = FILMS_COUNT_PER_STEP;
+  render(siteFilmsContainer, createButton(), `afterend`);
+  const loadMoreButton = document.querySelector(`.films-list__show-more`);
+  loadMoreButton.addEventListener(`click`, (evt) => {
+    evt.preventDefault();
+    films
+      .slice(renderedTaskCount, renderedTaskCount + FILMS_COUNT_PER_STEP)
+      .forEach((film) => render(siteFilmsContainer, createFilmCard(film)));
+
+    renderedTaskCount += FILMS_COUNT_PER_STEP;
+
+    if (renderedTaskCount >= films.length) {
+      loadMoreButton.remove();
+    }
+  });
+}
+
 render(siteFilmsSection, createExtraContainerRated());
 render(siteFilmsSection, createExtraContainerCommented());
 
