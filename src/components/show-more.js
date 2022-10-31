@@ -1,15 +1,12 @@
 import {createElement} from "../utils";
 
-export default class ContainerCommented {
-  constructor() {
+export default class ShowMore {
+  constructor(count) {
     this._element = null;
+    this._count = count;
   }
   getTemplate() {
-    return `
-      <section class="films-list--extra">
-      <h2 class="films-list__title">Most commented</h2>
-      <div class="films-list__container"></div>
-      </section>`;
+    return `<button class="films-list__show-more">Show more</button>`;
   }
   getElement() {
     if (!this._element) {
@@ -21,4 +18,3 @@ export default class ContainerCommented {
     this._element = null;
   }
 }
-

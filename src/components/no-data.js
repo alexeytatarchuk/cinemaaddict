@@ -1,15 +1,11 @@
 import {createElement} from "../utils";
 
-export default class UserProfile {
+export default class NoData {
   constructor() {
     this._element = null;
   }
   getTemplate() {
-    return `
-        <section class="header__profile profile">
-            <p class="profile__rating">Movie Buff</p>
-            <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-        </section>`;
+    return `<h2 class="films-list__title">There are no movies in our database</h2>`;
   }
   getElement() {
     if (!this._element) {

@@ -6,6 +6,11 @@ const MIN_DURATION_HOURS = 1;
 const MAX_DURATION_HOURS = 3;
 const MIN_DURATION_MINUTES = 1;
 const MAX_DURATION_MINUTES = 59;
+const WRITERS_COUNT = 3;
+const CAST_COUNT = 3;
+const MAX_DAY_GAP = 14;
+const MIN_COMMENTS = 0;
+const MAX_COMMENTS = 5;
 
 const GENRES = [
   `Musical`,
@@ -14,6 +19,51 @@ const GENRES = [
   `Comedy`,
   `Cartoon`,
   `Mystery`,
+];
+
+const COUNTRIES = [
+  `USA`,
+  `France`,
+  `Germany`,
+  `England`,
+  `Italy`,
+  `India`
+];
+
+const SURNAMES = [
+  `Douglas`,
+  `Smith`,
+  `Wigton`,
+  `Herald`,
+  `Potter`
+];
+
+const NICKNAMES = [
+  `Tim Macoveev`,
+  `John Doe`
+];
+
+const COMMENTS = [
+  `Interesting setting and a good cast`,
+  `Booooooooooring`,
+  `Very very old. Meh`,
+  `Almost two hours? Seriously?`,
+  `Great!`,
+];
+
+const EMOJIS = [
+  `angry`,
+  `puke`,
+  `sleeping`,
+  `smile`,
+];
+
+const NAMES = [
+  `John`,
+  `Mark`,
+  `Paul`,
+  `Kirk`,
+  `Bob`,
 ];
 
 const TITLES = [
@@ -66,17 +116,54 @@ export const generateFilm = () => {
     return getRandomInt(1, 9) + `.` + getRandomInt(0, 9);
   };
 
+  const generateNamesArray = (quantity) => {
+    return new Array(quantity)
+      .fill()
+      .map(function () {
+        return getRandomFromArray(NAMES) + ` ` + getRandomFromArray(SURNAMES);
+      })
+      .join(`, `);
+  };
+
+  const generateComments = () => {
+    const commentsQuantity = getRandomInt(MIN_COMMENTS, MAX_COMMENTS);
+    return new Array(commentsQuantity).fill().map(generateComment);
+  };
+
+  const generateComment = () => {
+    return {
+      emoji: getRandomFromArray(EMOJIS),
+      comment: getRandomFromArray(COMMENTS),
+      nickname: getRandomFromArray(NICKNAMES),
+      dateComment: generateCommentData(),
+    };
+  };
+
+  const generateCommentData = () => {
+    const daysGap = getRandomInt(0, MAX_DAY_GAP);
+    const currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() - daysGap);
+    return new Date(currentDate);
+  };
+
+
   return {
     title: getRandomFromArray(TITLES),
+    titleOriginal: ``,
     rating: generateRating(),
     year: getRandomInt(1950, 2025),
     duration: getRandomInt(MAX_DURATION_HOURS, MIN_DURATION_HOURS) + `h ` + getRandomInt(MIN_DURATION_MINUTES, MAX_DURATION_MINUTES) + `m`,
+    country: getRandomFromArray(COUNTRIES),
     genre: getRandomFromArray(GENRES),
+    director: getRandomFromArray(NAMES) + ` ` + getRandomFromArray(SURNAMES),
+    writers: generateNamesArray(WRITERS_COUNT),
+    cast: generateNamesArray(CAST_COUNT),
+    comments: generateComments(),
     poster: `./images/posters/` + getRandomFromArray(POSTERS_FILENAMES),
     description: generateDescription(),
-    comments: getRandomInt(0, 100),
     isInWatchlist: getRandomInt(0, 1),
     isWatched: getRandomInt(0, 1),
-    isFavorite: getRandomInt(0, 1)
+    isFavorite: getRandomInt(0, 1),
+    age: getRandomInt(12, 21) + `+`
   };
 };
