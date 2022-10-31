@@ -1,4 +1,5 @@
-import {getDateComment, createElement} from "../utils.js";
+import {getDateComment} from "../utils.js";
+import AbstractComponent from "./abstract";
 
 const createFilmDetails = (film) => {
   const {title, age, director, cast, country, writers, rating, year, duration, genre, poster, description, isInWatchlist, isWatched, isFavorite, comments} = film;
@@ -143,25 +144,17 @@ const createFilmDetails = (film) => {
 </section>`;
 };
 
-export default class FilmDetails {
+export default class FilmDetails extends AbstractComponent {
   constructor(film) {
+    super();
     this._film = film;
-    this._element = null;
   }
 
   getTemplate() {
     return createFilmDetails(this._film);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setClickCloseHandler(handler) {
+    this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, handler);
   }
 }

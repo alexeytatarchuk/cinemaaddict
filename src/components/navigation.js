@@ -1,8 +1,8 @@
-import {createElement} from "../utils";
+import AbstractComponent from "./abstract";
 
-export default class Navigation {
+export default class Navigation extends AbstractComponent {
   constructor(filters) {
-    this._element = null;
+    super();
     this._filters = filters;
   }
   getTemplate() {
@@ -16,14 +16,5 @@ export default class Navigation {
         </div>
         <a href="#stats" class="main-navigation__additional">Stats</a>
       </nav>`;
-  }
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-  removeElement() {
-    this._element = null;
   }
 }

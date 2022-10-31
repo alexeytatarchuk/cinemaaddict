@@ -1,20 +1,22 @@
-import {createElement} from "../utils";
+import AbstractComponent from "./abstract";
 
-export default class ShowMore {
-  constructor(count) {
-    this._element = null;
-    this._count = count;
+export default class ShowMore extends AbstractComponent {
+  constructor() {
+    super();
+    this._clickHandler = this._clickHandler.bind(this);
   }
+
   getTemplate() {
     return `<button class="films-list__show-more">Show more</button>`;
   }
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
+
+  _clickHandler(evt) {
+    evt.preventDefault();
+    this._callback();
   }
-  removeElement() {
-    this._element = null;
+
+  setClickHandler(handler) {
+    this._callback = handler;
+    this.getElement().addEventListener(`click`, this._clickHandler);
   }
 }

@@ -11,13 +11,3 @@ export const getRandomFromArray = (array) => {
 export const getDateComment = (date) => {
   return date.toLocaleString(`en-ZA`);
 };
-
-export const createElement = (template) => {
-  const element = document.createElement(`div`);
-  element.innerHTML = template;
-  return element.firstElementChild;
-};
-
-export const render = (container, element) => {
-  container.append(element);
-};
