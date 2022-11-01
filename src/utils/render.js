@@ -1,4 +1,4 @@
-import AbstractComponent from "../components/abstract";
+import AbstractComponent from "../views/abstract";
 
 export const render = (container, child) => {
   if (container instanceof AbstractComponent) {

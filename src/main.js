@@ -1,10 +1,10 @@
 import {render} from "./utils/render";
 import {generateFilm} from "./mock/film";
 import {getFilterCounts} from "./mock/filter";
-import UserProfile from "./components/user-profile";
-import Navigation from "./components/navigation";
-import FooterStats from "./components/footer-stats";
-import PageController from "./page";
+import UserProfile from "./views/user-profile";
+import Navigation from "./views/navigation";
+import FooterStats from "./views/footer-stats";
+import PageController from "./presenters/page";
 
 const FILMS_COUNT = 15;
 

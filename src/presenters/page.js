@@ -1,14 +1,14 @@
-import {render, remove} from "./utils/render";
-import NoData from "./components/no-data";
-import FilmContainer from "./components/film-container";
-import FilmCard from "./components/film-card";
-import FilmDetails from "./components/film-details";
-import ShowMore from "./components/show-more";
-import ContainerRated from "./components/container-rated";
-import ContainerCommented from "./components/container-commented";
-import Sorting from "./components/sorting";
-import FilmsSection from "./components/films";
-import FilmList from "./components/film-list";
+import {render, remove} from "../utils/render";
+import NoData from "../views/no-data";
+import FilmContainer from "../views/film-container";
+import FilmCard from "../views/film-card";
+import FilmDetails from "../views/film-details";
+import ShowMore from "../views/show-more";
+import ContainerRated from "../views/container-rated";
+import ContainerCommented from "../views/container-commented";
+import Sorting from "../views/sorting";
+import FilmsSection from "../views/films";
+import FilmList from "../views/film-list";
 
 const FILMS_COUNT_PER_STEP = 5;
 const EXTRA_COUNT = 2;
@@ -25,10 +25,13 @@ export default class PageController {
     this._containerRated = new ContainerRated();
     this._containerCommented = new ContainerCommented();
     this._renderedSteps = 0;
+    this._films = null;
+    this._filmsDefault = null;
+    this._changeSortType = this._changeSortType.bind(this);
   }
 
-  _getTopRated(films) {
-    return films.map((x) => x)
+  _sortByRating() {
+    return this._films.map((x) => x)
       .sort(function (a, b) {
         if (a.rating > b.rating) {
           return -1;
@@ -40,8 +43,21 @@ export default class PageController {
       });
   }
 
-  _getTopCommented(films) {
-    return films.map((x) => x)
+  _sortByDate() {
+    return this._films.map((x) => x)
+      .sort(function (a, b) {
+        if (a.year > b.year) {
+          return -1;
+        }
+        if (a.year < b.year) {
+          return 1;
+        }
+        return 0;
+      });
+  }
+
+  _getTopCommented() {
+    return this._films.map((x) => x)
       .sort(function (a, b) {
         if (a.comments > b.comments) {
           return -1;
@@ -94,21 +110,45 @@ export default class PageController {
     }
   }
 
+  _changeSortType(sortType) {
+    switch (sortType) {
+      case `rating`:
+        this._films = this._sortByRating();
+        break;
+      case `date`:
+        this._films = this._sortByDate();
+        break;
+      default:
+        this._films = this._filmsDefault;
+        break;
+    }
+    remove(this._filmContainer);
+    remove(this._showMore);
+    this._filmContainer = this._renderFilmContainer(this._filmList, this._films.slice(0, this._renderedSteps * FILMS_COUNT_PER_STEP));
+    if (FILMS_COUNT_PER_STEP * this._renderedSteps < this._films.length) {
+      render(this._filmList, this._showMore);
+      this._showMore.setClickHandler(this._showMoreFilms.bind(this, this._films));
+    }
+  }
+
   render(films) {
+    this._films = films;
+    this._filmsDefault = films;
     render(this._container, this._sorting);
+    this._sorting.changeSortTypeHandler(this._changeSortType);
     render(this._container, this._filmsSection);
     render(this._filmsSection, this._filmList);
-    if (films.length > 0) {
-      this._filmContainer = this._renderFilmContainer(this._filmList, films.slice(0, FILMS_COUNT_PER_STEP));
-      if (films.length > FILMS_COUNT_PER_STEP) {
+    if (this._films.length > 0) {
+      this._filmContainer = this._renderFilmContainer(this._filmList, this._films.slice(0, FILMS_COUNT_PER_STEP));
+      if (this._films.length > FILMS_COUNT_PER_STEP) {
         render(this._filmList, this._showMore);
         this._renderedSteps++;
-        this._showMore.setClickHandler(this._showMoreFilms.bind(this, films));
+        this._showMore.setClickHandler(this._showMoreFilms.bind(this, this._films));
       }
       render(this._filmsSection, this._containerRated);
       render(this._filmsSection, this._containerCommented);
-      this._renderFilmContainer(this._containerCommented, this._getTopCommented(films).slice(0, EXTRA_COUNT));
-      this._renderFilmContainer(this._containerRated, this._getTopRated(films).slice(0, EXTRA_COUNT));
+      this._renderFilmContainer(this._containerCommented, this._getTopCommented().slice(0, EXTRA_COUNT));
+      this._renderFilmContainer(this._containerRated, this._sortByRating().slice(0, EXTRA_COUNT));
     } else {
       render(this._filmList, this._noData);
     }
