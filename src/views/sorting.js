@@ -1,10 +1,10 @@
-import AbstractComponent from "./abstract";
+import AbstractComponent from './abstract';
 
 export default class Sorting extends AbstractComponent {
   constructor() {
     super();
     this._clickHandler = this._clickHandler.bind(this);
-    this._sortType = `default`;
+    this._sortType = 'default';
   }
 
   getTemplate() {
@@ -18,18 +18,18 @@ export default class Sorting extends AbstractComponent {
 
   _clickHandler(evt) {
     evt.preventDefault();
-    if (!evt.target.classList.contains(`sort__button--active`)) {
-      this.getElement().querySelector(`.sort__button--active`).classList.remove(`sort__button--active`);
-      evt.target.classList.add(`sort__button--active`);
-      this._sortType = evt.target.getAttribute(`data-sort-type`);
+    if (!evt.target.classList.contains('sort__button--active')) {
+      this.getElement().querySelector('.sort__button--active').classList.remove('sort__button--active');
+      evt.target.classList.add('sort__button--active');
+      this._sortType = evt.target.getAttribute('data-sort-type');
       this._callback(this._sortType);
     }
   }
 
   changeSortTypeHandler(handler) {
     this._callback = handler;
-    this.getElement().querySelectorAll(`.sort__button`).forEach((button)=>{
-      button.addEventListener(`click`, this._clickHandler);
+    this.getElement().querySelectorAll('.sort__button').forEach((button)=>{
+      button.addEventListener('click', this._clickHandler);
     });
   }
 }

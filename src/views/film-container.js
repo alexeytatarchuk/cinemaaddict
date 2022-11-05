@@ -1,10 +1,7 @@
-import AbstractComponent from "./abstract";
+import AbstractComponent from './abstract';
 
 export default class FilmContainer extends AbstractComponent {
   getTemplate() {
-    return `
-        <div class="films-list__container">
-        </div>`;
+    return '<div class="films-list__container"></div>';
   }
 }
-

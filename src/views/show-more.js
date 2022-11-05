@@ -1,4 +1,4 @@
-import AbstractComponent from "./abstract";
+import AbstractComponent from './abstract';
 
 export default class ShowMore extends AbstractComponent {
   constructor() {
@@ -7,7 +7,7 @@ export default class ShowMore extends AbstractComponent {
   }
 
   getTemplate() {
-    return `<button class="films-list__show-more">Show more</button>`;
+    return '<button class="films-list__show-more">Show more</button>';
   }
 
   _clickHandler(evt) {
@@ -17,6 +17,6 @@ export default class ShowMore extends AbstractComponent {
 
   setClickHandler(handler) {
     this._callback = handler;
-    this.getElement().addEventListener(`click`, this._clickHandler);
+    this.getElement().addEventListener('click', this._clickHandler);
   }
 }

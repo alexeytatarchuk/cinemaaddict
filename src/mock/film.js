@@ -1,4 +1,5 @@
-import {getRandomFromArray, getRandomInt} from "../utils";
+import {getRandomFromArray, getRandomInt, getRandomBoolean} from '../utils';
+import {nanoid} from 'nanoid';
 
 const MIN_DESCRIPTION = 1;
 const MAX_DESCRIPTION = 3;
@@ -13,85 +14,85 @@ const MIN_COMMENTS = 0;
 const MAX_COMMENTS = 5;
 
 const GENRES = [
-  `Musical`,
-  `Western`,
-  `Drama`,
-  `Comedy`,
-  `Cartoon`,
-  `Mystery`,
+  'Musical',
+  'Western',
+  'Drama',
+  'Comedy',
+  'Cartoon',
+  'Mystery',
 ];
 
 const COUNTRIES = [
-  `USA`,
-  `France`,
-  `Germany`,
-  `England`,
-  `Italy`,
-  `India`
+  'USA',
+  'France',
+  'Germany',
+  'England',
+  'Italy',
+  'India'
 ];
 
 const SURNAMES = [
-  `Douglas`,
-  `Smith`,
-  `Wigton`,
-  `Herald`,
-  `Potter`
+  'Douglas',
+  'Smith',
+  'Wigton',
+  'Herald',
+  'Potter'
 ];
 
 const NICKNAMES = [
-  `Tim Macoveev`,
-  `John Doe`
+  'Tim Macoveev',
+  'John Doe'
 ];
 
 const COMMENTS = [
-  `Interesting setting and a good cast`,
-  `Booooooooooring`,
-  `Very very old. Meh`,
-  `Almost two hours? Seriously?`,
-  `Great!`,
+  'Interesting setting and a good cast',
+  'Booooooooooring',
+  'Very very old. Meh',
+  'Almost two hours? Seriously?',
+  'Great!',
 ];
 
 const EMOJIS = [
-  `angry`,
-  `puke`,
-  `sleeping`,
-  `smile`,
+  'angry',
+  'puke',
+  'sleeping',
+  'smile',
 ];
 
 const NAMES = [
-  `John`,
-  `Mark`,
-  `Paul`,
-  `Kirk`,
-  `Bob`,
+  'John',
+  'Mark',
+  'Paul',
+  'Kirk',
+  'Bob',
 ];
 
 const TITLES = [
-  `The Voyeurs`,
-  `Three Billboards Outside Ebbing, Missouri`,
-  `Yes Man`,
-  `A Beautiful Mind`,
-  `Snatch`,
-  `Requiem for a Dream`,
-  `Forrest Gump`,
-  `Fight Club`,
-  `The Dark Knight`,
-  `Into the Deep`,
-  `The Lord of the Rings: The Rings of Power`,
-  `House of the Dragon`,
-  `Man vs. Bee`,
-  `The Handmaid's Tale`,
-  `Last Night in Soho`
+  'The Voyeurs',
+  'Three Billboards Outside Ebbing, Missouri',
+  'Yes Man',
+  'A Beautiful Mind',
+  'Snatch',
+  'Requiem for a Dream',
+  'Forrest Gump',
+  'Fight Club',
+  'The Dark Knight',
+  'Into the Deep',
+  'The Lord of the Rings: The Rings of Power',
+  'House of the Dragon',
+  'Man vs. Bee',
+  'The Handmaid\'s Tale',
+  'Last Night in Soho'
 ];
 
 const POSTERS_FILENAMES = [
-  `made-for-each-other.png`,
-  `popeye-meets-sinbad.png`,
-  `sagebrush-trail.jpg`,
-  `santa-claus-conquers-the-martians.jpg`,
-  `the-dance-of-life.jpg`,
-  `the-great-flamarion.jpg`,
-  `the-man-with-the-golden-arm.jpg`
+  'made-for-each-other.png',
+  'popeye-meets-sinbad.png',
+  'sagebrush-trail.jpg',
+  'santa-claus-conquers-the-martians.jpg',
+  'the-dance-of-life.jpg',
+  'the-great-flamarion.jpg',
+  'the-man-with-the-golden-arm.jpg'
 ];
 
 const DESCRIPTION = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula
@@ -105,39 +106,19 @@ export const generateFilm = () => {
 
   const generateDescription = () => {
     const sentences = DESCRIPTION.match(/[^.]+[. ]+/g);
-    let generatedDescription = ``;
+    let generatedDescription = '';
     for (let i = MIN_DESCRIPTION; i <= getRandomInt(MIN_DESCRIPTION, MAX_DESCRIPTION); i++) {
       generatedDescription += sentences[getRandomInt(0, sentences.length - 1)];
     }
     return generatedDescription;
   };
 
-  const generateRating = () => {
-    return getRandomInt(1, 9) + `.` + getRandomInt(0, 9);
-  };
+  const generateRating = () => `${getRandomInt(1, 9) }.${ getRandomInt(0, 9)}`;
 
-  const generateNamesArray = (quantity) => {
-    return new Array(quantity)
-      .fill()
-      .map(function () {
-        return getRandomFromArray(NAMES) + ` ` + getRandomFromArray(SURNAMES);
-      })
-      .join(`, `);
-  };
-
-  const generateComments = () => {
-    const commentsQuantity = getRandomInt(MIN_COMMENTS, MAX_COMMENTS);
-    return new Array(commentsQuantity).fill().map(generateComment);
-  };
-
-  const generateComment = () => {
-    return {
-      emoji: getRandomFromArray(EMOJIS),
-      comment: getRandomFromArray(COMMENTS),
-      nickname: getRandomFromArray(NICKNAMES),
-      dateComment: generateCommentData(),
-    };
-  };
+  const generateNamesArray = (quantity) => new Array(quantity)
+    .fill(0, 0)
+    .map(() => `${getRandomFromArray(NAMES) } ${ getRandomFromArray(SURNAMES)}`)
+    .join(', ');
 
   const generateCommentData = () => {
     const daysGap = getRandomInt(0, MAX_DAY_GAP);
@@ -146,24 +127,36 @@ export const generateFilm = () => {
     return new Date(currentDate);
   };
 
+  const generateComment = () => ({
+    emoji: getRandomFromArray(EMOJIS),
+    comment: getRandomFromArray(COMMENTS),
+    nickname: getRandomFromArray(NICKNAMES),
+    dateComment: generateCommentData(),
+  });
+
+  const generateComments = () => {
+    const commentsQuantity = getRandomInt(MIN_COMMENTS, MAX_COMMENTS);
+    return new Array(commentsQuantity).fill(0, 0).map(generateComment);
+  };
 
   return {
+    id: nanoid(),
     title: getRandomFromArray(TITLES),
-    titleOriginal: ``,
+    titleOriginal: '',
     rating: generateRating(),
     year: getRandomInt(1950, 2025),
-    duration: getRandomInt(MAX_DURATION_HOURS, MIN_DURATION_HOURS) + `h ` + getRandomInt(MIN_DURATION_MINUTES, MAX_DURATION_MINUTES) + `m`,
+    duration: `${getRandomInt(MAX_DURATION_HOURS, MIN_DURATION_HOURS) }h ${ getRandomInt(MIN_DURATION_MINUTES, MAX_DURATION_MINUTES) }m`,
     country: getRandomFromArray(COUNTRIES),
     genre: getRandomFromArray(GENRES),
-    director: getRandomFromArray(NAMES) + ` ` + getRandomFromArray(SURNAMES),
+    director: `${getRandomFromArray(NAMES) } ${ getRandomFromArray(SURNAMES)}`,
     writers: generateNamesArray(WRITERS_COUNT),
     cast: generateNamesArray(CAST_COUNT),
     comments: generateComments(),
-    poster: `./images/posters/` + getRandomFromArray(POSTERS_FILENAMES),
+    poster: `./images/posters/${ getRandomFromArray(POSTERS_FILENAMES)}`,
     description: generateDescription(),
-    isInWatchlist: getRandomInt(0, 1),
-    isWatched: getRandomInt(0, 1),
-    isFavorite: getRandomInt(0, 1),
-    age: getRandomInt(12, 21) + `+`
+    isInWatchList: getRandomBoolean(),
+    isWatched: getRandomBoolean(),
+    isFavorite:getRandomBoolean(),
+    age: `${getRandomInt(12, 21) }+`
   };
 };

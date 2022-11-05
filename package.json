@@ -18,5 +18,9 @@
   },
   "engines": {
     "node": "16"
+  },
+  "dependencies": {
+    "moment": "^2.29.4",
+    "nanoid": "^4.0.0"
   }
 }
