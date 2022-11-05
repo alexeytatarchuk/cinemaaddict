@@ -1,4 +1,4 @@
-import {render, remove, updateElement} from '../utils/render';
+import {render, remove} from '../utils/render';
 import NoData from '../views/no-data';
 import FilmContainer from '../views/film-container';
 import ShowMore from '../views/show-more';
@@ -99,7 +99,8 @@ export default class PageController {
   }
 
   _onDataChange(film, updatedFilm) {
-    this._films = updateElement(this._films, updatedFilm);
+    this._filmsModel.updateMovie(updatedFilm.id, updatedFilm);
+    this._films = this._filmsModel.getMovies();
     [...this._filmsPresenter, ...this._filmsPresenterExtra].map((movie) => {
       if (movie.id === film.id) {
         movie.rerender(film, updatedFilm);
@@ -131,7 +132,8 @@ export default class PageController {
   }
 
   render(films) {
-    this._films = films;
+    this._filmsModel = films;
+    this._films = this._filmsModel.getMovies();
     render(this._container, this._sorting);
     this._sorting.changeSortTypeHandler(this._changeSortType);
     render(this._container, this._filmsSection);
