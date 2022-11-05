@@ -1,5 +1,5 @@
 {
-  "name": "Cinemaddict",
+  "name": "cinemaddict",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -11,7 +11,6 @@
   "devDependencies": {
     "eslint": "8.26.0",
     "eslint-config-htmlacademy": "8.0.0",
-    "stylelint-config-htmlacademy": "1.1.2",
     "webpack": "5.74.0",
     "webpack-cli": "4.10.0",
     "webpack-dev-server": "4.11.1"
