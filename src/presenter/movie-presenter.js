@@ -2,7 +2,7 @@ import {render, replace, remove} from '../utils/render';
 import FilmCard from '../views/film-card';
 import FilmDetails from '../views/film-details';
 
-export default class MovieController {
+export default class MoviePresenter {
   constructor(container, changeData, onViewChange) {
     this._container = container;
     this._film = null;
