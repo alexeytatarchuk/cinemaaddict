@@ -1,20 +1,35 @@
 import {getDateComment} from '../utils.js';
-import AbstractSmartComponent from './abstract-smart';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 
-export default class FilmDetails extends AbstractSmartComponent {
-  constructor(film) {
+export default class MovieDetailsView extends AbstractStatefulView {
+  #movie = null;
+  #closeMovieDetailClickHandler = null;
+  #comment = {text: null, emoji: null};
+
+  constructor(movie) {
     super();
-    this._film = film;
-    this._handleMarkAsWatched = this._handleMarkAsWatched.bind(this);
-    this._handleAddToWatch = this._handleAddToWatch.bind(this);
-    this._handleAddToFavorite = this._handleAddToFavorite.bind(this);
-    this._handleClosePopup = this._handleClosePopup.bind(this);
-    this.rerender = this.rerender.bind(this);
-    this.recoveryListeners = this.recoveryListeners.bind(this);
+    this.#movie = movie;
   }
 
-  getTemplate() {
-    const {title, age, director, cast, country, writers, rating, year, duration, genre, poster, description, isInWatchList, isWatched, isFavorite, comments} = this._film;
+  get template() {
+    const {
+      title,
+      age,
+      director,
+      cast,
+      country,
+      writers,
+      rating,
+      year,
+      duration,
+      genre,
+      poster,
+      description,
+      isInWatchList,
+      isWatched,
+      isFavorite,
+      comments
+    } = this.#movie;
 
     const generateComments = () => {
       let result = '';
@@ -28,7 +43,7 @@ export default class FilmDetails extends AbstractSmartComponent {
                       <p class="film-details__comment-info">
                         <span class="film-details__comment-author">${comment.nickname}</span>
                         <span class="film-details__comment-day">${getDateComment(comment.dateComment)}</span>
-                        <button class="film-details__comment-delete">Delete</button>
+                        <button class="film-details__comment-delete" data-comment-id="${comment.id}">Delete</button>
                       </p>
                     </div>
                    </li>`;
@@ -55,7 +70,6 @@ export default class FilmDetails extends AbstractSmartComponent {
                           <h3 class="film-details__title">${title}</h3>
                           <p class="film-details__title-original">Original: ${title}</p>
                         </div>
-
                         <div class="film-details__rating">
                           <p class="film-details__total-rating">${rating}</p>
                         </div>
@@ -144,59 +158,113 @@ export default class FilmDetails extends AbstractSmartComponent {
             </section>`;
   }
 
-  recoveryListeners() {
-    this.addToWatchClickHandler(this._addToWatchClick);
-    this.markAsWatchedClickHandler(this._markAsWatchedClick);
-    this.addToFavoriteClickHandler(this._addToFavoriteClick);
-    this.setClickCloseHandler(this._closePopupClickHandler);
-  }
+  _restoreHandlers = () => {
+    this.setClickCloseHandler(this.#closeMovieDetailClickHandler);
+    this.addToFavoriteClickHandler(this.#handleAddToFavorite);
+    this.addToWatchlistClickHandler(this.#handleAddToWatchlist);
+    this.addToWatchedClickHandler(this.#handleAddToWatched);
+    this.setEmojiHandler();
+    this.setCommentSubmitHandler(this._callback.commentSubmit);
+    this.setDeleteCommentClickHandler(this._callback.commentDelete);
+    this.setCommentTextUpdateHandler();
+  };
 
-  _handleAddToWatch(evt) {
+  #handleAddToFavorite = (evt) => {
     evt.preventDefault();
-    this._addToWatchClick();
-    this._film.isInWatchList = true;
-    this.updateData(this._film);
-  }
+    this._callback.addToFavoriteClick();
+  };
 
-  _handleMarkAsWatched(evt) {
+  #handleAddToWatched = (evt) => {
     evt.preventDefault();
-    this._markAsWatchedClick();
-    this._film.isWatched = !this._film.isWatched;
-    this.updateData(this._film);
-  }
+    this._callback.addToWatchedClick();
+  };
 
-  _handleAddToFavorite(evt) {
+  #handleAddToWatchlist = (evt) => {
     evt.preventDefault();
-    this._addToFavoriteClick();
-    this._film.isFavorite = true;
-    this.updateData(this._film);
-  }
-
-  _handleClosePopup(evt) {
-    evt.preventDefault();
-    this._closePopupClickHandler();
-  }
-
-  setClickCloseHandler(handler) {
-    this._closePopupClickHandler = handler;
-    this.getElement().querySelector('.film-details__close-btn').addEventListener('click', this._handleClosePopup);
-  }
-
-  addToWatchClickHandler(handler) {
-    this._addToWatchClick = handler;
-    this.getElement().querySelector('.film-details__control-label--watchlist')
-      .addEventListener('click', this._handleAddToWatch);
-  }
-
-  markAsWatchedClickHandler(handler) {
-    this._markAsWatchedClick = handler;
-    this.getElement().querySelector('.film-details__control-label--watched')
-      .addEventListener('click', this._handleMarkAsWatched);
-  }
+    this._callback.addToWatchlistClick();
+  };
 
   addToFavoriteClickHandler(handler) {
-    this._addToFavoriteClick = handler;
-    this.getElement().querySelector('.film-details__control-label--favorite')
-      .addEventListener('click', this._handleAddToFavorite);
+    this._callback.addToFavoriteClick = handler;
+    this.element.querySelector('#favorite').addEventListener('change', this.#handleAddToFavorite);
+  }
+
+  addToWatchedClickHandler(handler) {
+    this._callback.addToWatchedClick = handler;
+    this.element.querySelector('#watched').addEventListener('change', this.#handleAddToWatched);
+  }
+
+  addToWatchlistClickHandler(handler) {
+    this._callback.addToWatchlistClick = handler;
+    this.element.querySelector('#watchlist').addEventListener('change', this.#handleAddToWatchlist);
+  }
+
+  #handleEmojiClick = (evt) => {
+    const emoji = evt.target.value;
+    const img = document.createElement('img');
+    img.setAttribute('src', `./images/emoji/${emoji}.png`);
+    img.setAttribute('height', '55');
+    img.setAttribute('width', '55');
+    img.setAttribute('alt', `emoji-${emoji}`);
+    this.element.querySelector('.film-details__add-emoji-label').replaceChildren(img);
+    this.#comment.emoji = emoji;
+  };
+
+  setEmojiHandler() {
+    this.element.querySelectorAll('.film-details__emoji-item').forEach((el) => {
+      el.addEventListener('change', this.#handleEmojiClick);
+    });
+  }
+
+  #commentSubmitHandler = (evt) => {
+    const commentForm = this.element.querySelector('form');
+    const commentTextarea = commentForm.elements['comment'];
+    if ((evt.ctrlKey || evt.metaKey) && evt.code === 'Enter') {
+      if (this.#comment.text && this.#comment.emoji) {
+        this._callback.commentSubmit(this.#comment);
+        this.#comment = {text: null, emoji: null};
+      } else {
+        commentTextarea.setCustomValidity('Please select an emotion and write a comment text');
+        commentTextarea.reportValidity();
+      }
+    }
+  };
+
+  #handleDeleteComment = (evt) => {
+    evt.preventDefault();
+    this._callback.commentDelete(evt.target.dataset.commentId);
+  };
+
+  setDeleteCommentClickHandler(callback) {
+    this._callback.commentDelete = callback;
+    this.element.querySelectorAll('.film-details__comment-delete').forEach((deleteButton) => {
+      deleteButton.addEventListener('click', this.#handleDeleteComment);
+    });
+  }
+
+  setCommentSubmitHandler(callback) {
+    this._callback.commentSubmit = callback;
+    document.addEventListener('keydown', this.#commentSubmitHandler);
+  }
+
+  #commentChangeHandler = (evt) => {
+    this.#comment.text = evt.target.value;
+  };
+
+  setCommentTextUpdateHandler() {
+    this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#commentChangeHandler);
+  }
+
+  #handleClosePopup = (evt) => {
+    evt.preventDefault();
+    this._callback.closeMovieDetailClickHandler();
+  };
+
+  setClickCloseHandler(handler) {
+    this._callback.closeMovieDetailClickHandler = handler;
+    this.element.querySelector('.film-details__close-btn')
+      .addEventListener('click', this.#handleClosePopup);
   }
 }
+
+

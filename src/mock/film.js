@@ -128,6 +128,7 @@ export const generateFilm = () => {
   };
 
   const generateComment = () => ({
+    id: nanoid(),
     emoji: getRandomFromArray(EMOJIS),
     comment: getRandomFromArray(COMMENTS),
     nickname: getRandomFromArray(NICKNAMES),
