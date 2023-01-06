@@ -1,20 +1,20 @@
 import {createElement} from '../render.js';
 import './abstract-view.css';
 
-/** @const {string} Класс, реализующий эффект "покачивания головой" */
+/** @const {string} A class that implements the "head shake" effect */
 const SHAKE_CLASS_NAME = 'shake';
 
-/** @const {number} Время анимации в миллисекундах */
+/** @const {number} Animation time in milliseconds */
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
 /**
- * Абстрактный класс представления
+ * Abstract view class
  */
 export default class AbstractView {
-  /** @type {HTMLElement|null} Элемент представления */
+  /** @type {HTMLElement|null} Submission element */
   #element = null;
 
-  /** @type {Object} Объект с колбэками. Может использоваться для хранения обработчиков событий */
+  /** @type {Object} An object with callbacks. Can be used to store event handlers */
   _callback = {};
 
   constructor() {
@@ -24,8 +24,8 @@ export default class AbstractView {
   }
 
   /**
-   * Геттер для получения элемента
-   * @returns {HTMLElement} Элемент представления
+   * Getter for obtaining an element
+   * @returns {HTMLElement} View element
    */
   get element() {
     if (!this.#element) {
@@ -36,22 +36,30 @@ export default class AbstractView {
   }
 
   /**
-   * Геттер для получения разметки элемента
+   * Getter for element markup
    * @abstract
-   * @returns {string} Разметка элемента в виде строки
+   * @returns {string} Markup an element as a string
    */
   get template() {
     throw new Error('Abstract method not implemented: get template');
   }
 
-  /** Метод для удаления элемента */
+  /** Method for removing an element */
   removeElement() {
     this.#element = null;
   }
 
+  show() {
+    this.element.classList.remove('visually-hidden');
+  }
+
+  hide() {
+    this.element.classList.add('visually-hidden');
+  }
+
   /**
-   * Метод, реализующий эффект "покачивания головой"
-   * @param {shakeCallback} [callback] Функция, которая будет вызвана после завершения анимации
+   * A method that realizes the "head shake" effect
+   * @param {shakeCallback} [callback] The function that will be called after the end of the animation
    */
   shake(callback) {
     this.element.classList.add(SHAKE_CLASS_NAME);
@@ -63,6 +71,6 @@ export default class AbstractView {
 }
 
 /**
- * Функция, которая будет вызвана методом shake после завершения анимации
+ * The function that will be called by the shake method after the animation ends
  * @callback shakeCallback
  */

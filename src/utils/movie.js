@@ -9,10 +9,10 @@ const sortByRating = (movieA, movieB) => {
 };
 
 const sortByDate = (movieA, movieB) => {
-  if (movieA.year > movieB.year) {
+  if (movieA.releaseDate > movieB.releaseDate) {
     return -1;
   }
-  if (movieA.year < movieB.year) {
+  if (movieA.releaseDate < movieB.releaseDate) {
     return 1;
   }
   return 0;
@@ -28,4 +28,11 @@ const sortByComments = (movieA, movieB) => {
   return 0;
 };
 
-export {sortByDate, sortByRating, sortByComments};
+const getDuration = (runtime) => {
+  const hours = Math.floor(runtime / 60);
+  const minutes = runtime % 60;
+  return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+};
+
+
+export {sortByDate, sortByRating, sortByComments, getDuration};

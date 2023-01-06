@@ -1,31 +1,30 @@
 import './ui-blocker.css';
 
 /**
- * Класс для блокировки интерфейса
+ * A class for locking the interface
  */
 export default class UiBlocker {
-  /** @type {number} Время до блокировки интерфейса в миллисекундах */
+  /** @type {number} Time to interface blocking in milliseconds */
   #lowerLimit;
 
-  /** @type {number} Минимальное время блокировки интерфейса в миллисекундах */
+  /** @type {number} Minimum interface blocking time in milliseconds */
   #upperLimit;
 
-  /** @type {HTMLElement|null} Элемент, блокирующий интерфейс */
+  /** @type {HTMLElement|null} The element blocking the interface */
   #element;
 
-  /** @type {number} Время вызова метода block */
+  /** @type {number} Call time of the block method */
   #startTime;
 
-  /** @type {number} Время вызова метода unblock */
+  /** @type {number} Call time of the unblock method */
   #endTime;
 
-  /** @type {number} Идентификатор таймера */
+  /** @type {number} Timer ID */
   #timerId;
 
   /**
-   * @param {Object} config Объект с настройками блокировщика
-   * @param {number} config.lowerLimit Время до блокировки интерфейса в миллисекундах. Если вызвать метод unblock раньше, то интерфейс заблокирован не будет
-   * @param {number} config.upperLimit Минимальное время блокировки в миллисекундах. Минимальная длительность блокировки
+   * @param {number} lowerLimit Time before interface is blocked in milliseconds. If you call the unblock method earlier, the interface will not be locked
+   * @param {number} upperLimit Minimum blocking time in milliseconds. Minimum locking time in milliseconds
    */
   constructor(lowerLimit, upperLimit) {
     this.#lowerLimit = lowerLimit;
@@ -36,7 +35,7 @@ export default class UiBlocker {
     document.body.append(this.#element);
   }
 
-  /** Метод для блокировки интерфейса */
+  /** Method for locking the interface */
   block = () => {
     this.#startTime = Date.now();
     this.#timerId = setTimeout(() => {
@@ -44,7 +43,7 @@ export default class UiBlocker {
     }, this.#lowerLimit);
   };
 
-  /** Метод для разблокировки интерфейса */
+  /** Method to unlock the interface */
   unblock = () => {
     this.#endTime = Date.now();
     const duration = this.#endTime - this.#startTime;
@@ -62,12 +61,12 @@ export default class UiBlocker {
     setTimeout(this.#removeClass, this.#upperLimit - duration);
   };
 
-  /** Метод, добавляющий CSS-класс элементу */
+  /** A method that adds a CSS class to an element */
   #addClass = () => {
     this.#element.classList.add('ui-blocker--on');
   };
 
-  /** Метод, убирающий CSS-класс с элемента */
+  /** A method that removes a CSS class from an element */
   #removeClass = () => {
     this.#element.classList.remove('ui-blocker--on');
   };

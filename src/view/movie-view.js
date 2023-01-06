@@ -1,4 +1,5 @@
 import AbstractView from '../framework/view/abstract-view';
+import {getDuration} from '../utils/movie';
 
 export default class MovieView extends AbstractView {
   #movie = null;
@@ -10,7 +11,7 @@ export default class MovieView extends AbstractView {
 
   get template() {
     const {
-      title, rating, year, duration, genre, poster, description, comments, isInWatchList, isWatched, isFavorite
+      title, rating, releaseDate, runtime, genre, poster, description, comments, isInWatchList, isWatched, isFavorite
     } = this.#movie;
     const returnActive = (item) => item ? 'film-card__controls-item--active' : '';
     return `
@@ -18,9 +19,9 @@ export default class MovieView extends AbstractView {
         <h3 class="film-card__title">${title}</h3>
         <p class="film-card__rating">${rating}</p>
         <p class="film-card__info">
-          <span class="film-card__year">${year}</span>
-          <span class="film-card__duration">${duration}</span>
-          <span class="film-card__genre">${genre}</span>
+          <span class="film-card__year">${releaseDate.getFullYear()}</span>
+          <span class="film-card__duration">${getDuration(runtime)}</span>
+          <span class="film-card__genre">${genre[0]}</span>
         </p>
         <img src="${poster}" alt="" class="film-card__poster">
         <p class="film-card__description">${description}</p>
@@ -28,7 +29,7 @@ export default class MovieView extends AbstractView {
         <form class="film-card__controls">
           <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${returnActive(isInWatchList)}">Add to watchlist</button>
           <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${returnActive(isWatched)}">Mark as watched</button>
-          <button class="film-card__controls-item button film-card__controls-item--favorite  ${returnActive(isFavorite)}">Mark as favorite</button>
+          <button class="film-card__controls-item button film-card__controls-item--favorite ${returnActive(isFavorite)}">Mark as favorite</button>
         </form>
       </article>`;
   }

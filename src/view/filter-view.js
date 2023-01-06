@@ -3,11 +3,13 @@ import AbstractView from '../framework/view/abstract-view';
 export default class FilterView extends AbstractView {
   #filters = null;
   #currentFilter = null;
+  #mode = false;
 
-  constructor(filters, currentFilterType) {
+  constructor(filters, currentFilterType, mode) {
     super();
     this.#filters = filters;
     this.#currentFilter = currentFilterType;
+    this.#mode = mode;
   }
 
   get template() {
@@ -24,7 +26,11 @@ export default class FilterView extends AbstractView {
       }
       result += '</a>';
     });
-    result += '</div><a href="#stats" class="main-navigation__additional">Stats</a></nav>';
+    if (this.#currentFilter !== 'STATS') {
+      result += '</div><a href="#stats" class="main-navigation__additional">Stats</a></nav>';
+    } else {
+      result += '</div><a href="#stats" class="main-navigation__additional main-navigation__item--active">Stats</a></nav>';
+    }
     return result;
   }
 
@@ -39,5 +45,15 @@ export default class FilterView extends AbstractView {
   #filterTypeChangeHandler = (evt) => {
     evt.preventDefault();
     this._callback.filterTypeChange(evt.target.dataset.filterType);
+  };
+
+  #handleModeChange = (evt) => {
+    evt.preventDefault();
+    this._callback.modeChange();
+  };
+
+  setModeChangeHandler = (callback) => {
+    this._callback.modeChange = callback;
+    this.element.querySelector('.main-navigation__additional').addEventListener('click', this.#handleModeChange);
   };
 }

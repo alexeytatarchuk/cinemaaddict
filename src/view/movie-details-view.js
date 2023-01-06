@@ -1,5 +1,5 @@
-import {getDateComment} from '../utils.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view';
+import {getDuration} from '../utils/movie';
 
 export default class MovieDetailsView extends AbstractStatefulView {
   #movie = null;
@@ -14,23 +14,24 @@ export default class MovieDetailsView extends AbstractStatefulView {
   get template() {
     const {
       title,
-      age,
-      director,
-      cast,
-      country,
-      writers,
       rating,
-      year,
-      duration,
+      releaseDate,
+      runtime,
       genre,
       poster,
       description,
+      comments,
       isInWatchList,
       isWatched,
       isFavorite,
-      comments
+      age,
+      director,
+      writers,
+      cast,
+      country
     } = this.#movie;
 
+    /*
     const generateComments = () => {
       let result = '';
       for (const comment of comments) {
@@ -42,7 +43,7 @@ export default class MovieDetailsView extends AbstractStatefulView {
                       <p class="film-details__comment-text">${comment.comment}</p>
                       <p class="film-details__comment-info">
                         <span class="film-details__comment-author">${comment.nickname}</span>
-                        <span class="film-details__comment-day">${getDateComment(comment.dateComment)}</span>
+                        <span class="film-details__comment-day">${comment.dateComment}</span>
                         <button class="film-details__comment-delete" data-comment-id="${comment.id}">Delete</button>
                       </p>
                     </div>
@@ -50,6 +51,7 @@ export default class MovieDetailsView extends AbstractStatefulView {
       }
       return result;
     };
+     */
 
     const returnActive = (item) => item ? 'checked' : '';
 
@@ -62,7 +64,7 @@ export default class MovieDetailsView extends AbstractStatefulView {
                   <div class="film-details__info-wrap">
                     <div class="film-details__poster">
                       <img class="film-details__poster-img" src="${poster}" alt="">
-                      <p class="film-details__age">${age}</p>
+                      <p class="film-details__age">${age}+</p>
                     </div>
                     <div class="film-details__info">
                       <div class="film-details__info-head">
@@ -89,11 +91,11 @@ export default class MovieDetailsView extends AbstractStatefulView {
                         </tr>
                         <tr class="film-details__row">
                           <td class="film-details__term">Release Date</td>
-                          <td class="film-details__cell">${year}</td>
+                          <td class="film-details__cell">${releaseDate.getFullYear()}</td>
                         </tr>
                         <tr class="film-details__row">
                           <td class="film-details__term">Runtime</td>
-                          <td class="film-details__cell">${duration}</td>
+                          <td class="film-details__cell">${getDuration(runtime)}</td>
                         </tr>
                         <tr class="film-details__row">
                           <td class="film-details__term">Country</td>
@@ -126,7 +128,6 @@ export default class MovieDetailsView extends AbstractStatefulView {
                   <section class="film-details__comments-wrap">
                     <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
                     <ul class="film-details__comments-list">
-                      ${generateComments()}
                     </ul>
                     <div class="film-details__new-comment">
                       <div class="film-details__add-emoji-label"></div>

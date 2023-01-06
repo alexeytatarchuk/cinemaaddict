@@ -11,16 +11,16 @@ const SortType = {
   RATING: 'rating',
 };
 
-const UserAction = {
-  UPDATE_TASK: 'UPDATE_TASK',
-  ADD_TASK: 'ADD_TASK',
-  DELETE_TASK: 'DELETE_TASK',
-};
-
 const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  MODE: 'MODE'
 };
 
-export {FilterType, SortType, UserAction, UpdateType};
+const ModeType = {
+  MOVIES: 'MOVIES',
+  STATS: 'STATS'
+};
+
+export {FilterType, SortType, UpdateType, ModeType};

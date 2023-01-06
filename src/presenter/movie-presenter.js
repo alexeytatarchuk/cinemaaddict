@@ -31,7 +31,6 @@ export default class MoviePresenter {
     const prevMovieComponent = this.#movieComponent;
     const prevMovieDetailsComponent = this.#movieDetailComponent;
     this.#movieComponent = new MovieView(movie);
-    this.#movieDetailComponent = new MovieDetailsView(movie);
     this.#movieComponent.addToFavoriteClickHandler(this.#handleAddToFavoriteClick);
     this.#movieComponent.markAsWatchedClickHandler(this.#handleMarkAsWatchedClick);
     this.#movieComponent.addToWatchClickHandler(this.#handleAddToWatchClick);
@@ -51,6 +50,7 @@ export default class MoviePresenter {
 
   #handleShowMovieDetailClick = () => {
     this.#changeMode();
+    this.#movieDetailComponent = new MovieDetailsView(this.#movie);
     render(this.#movieDetailComponent, document.body);
     this.#movieDetailComponent.setClickCloseHandler(this.resetView);
     this.#movieDetailComponent.addToFavoriteClickHandler(this.#handleAddToFavoriteClick);

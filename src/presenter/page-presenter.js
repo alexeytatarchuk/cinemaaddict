@@ -11,6 +11,7 @@ import MoviePresenter from './movie-presenter';
 import {filter} from '../utils/filter.js';
 import {sortByDate, sortByRating, sortByComments} from '../utils/movie.js';
 import {SortType, UpdateType, FilterType} from '../const.js';
+import StatisticView from '../view/statistic-view';
 
 const FILMS_COUNT_PER_STEP = 5;
 const EXTRA_COUNT = 2;
@@ -28,6 +29,7 @@ export default class PagePresenter {
   #filmContainerExtraRated = new FilmContainerView();
   #filmContainerRated = new ContainerRatedView();
   #filmContainerCommented = new ContainerCommentedView();
+  #statistic = new StatisticView();
   #renderedMoviesCount = FILMS_COUNT_PER_STEP;
   #pageMovies = [];
   #filterModel = null;
@@ -39,6 +41,7 @@ export default class PagePresenter {
     this.#movieModel = movies;
     this.#container = container;
     this.#filterModel = filterModel;
+    this.#movieModel.init();
     this.#movieModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
@@ -73,15 +76,25 @@ export default class PagePresenter {
     switch (updateType) {
       case UpdateType.PATCH:
         this.#moviePresenter.forEach((moviePresenter) => {
-          if(moviePresenter.id === data.id) {
+          if (moviePresenter.id === data.id) {
             moviePresenter.init(data);
           }
         });
         break;
       case UpdateType.MINOR:
         this.#clearPage();
-        this.#render();
+        this.init();
         break;
+      case UpdateType.MODE:
+        if (data) {
+          this.#filmsSection.show();
+          this.#sortComponent.show();
+          this.#statistic.hide();
+        } else {
+          this.#filmsSection.hide();
+          this.#sortComponent.hide();
+          this.#statistic.show();
+        }
     }
   };
 
@@ -118,7 +131,9 @@ export default class PagePresenter {
   };
 
   #onViewChange = () => {
-    this.#moviePresenter.forEach((movie) => {movie.resetView();});
+    this.#moviePresenter.forEach((movie) => {
+      movie.resetView();
+    });
   };
 
   #handleSortTypeChange = (sortType) => {
@@ -150,22 +165,24 @@ export default class PagePresenter {
   #render = () => {
     const movies = this.movies;
     const moviesCount = movies.length;
+    render(this.#statistic, this.#container);
     this.#renderSort();
     render(this.#filmsSection, this.#container);
     render(this.#filmList, this.#filmsSection.element);
     if (this.#pageMovies.length === 0) {
       this.#renderNoMovies();
+    } else {
+      render(this.#filmContainer, this.#filmList.element);
+      this.#renderMovies(movies.slice(0, Math.min(moviesCount, this.#renderedMoviesCount)));
+      if (moviesCount > this.#renderedMoviesCount) {
+        this.#renderLoadMoreButton();
+      }
+      render(this.#filmContainerRated, this.#filmsSection.element);
+      render(this.#filmContainerExtraRated, this.#filmContainerRated.element);
+      this.topRatedMovies.forEach((movie) => this.#renderMovie(movie, this.#filmContainerExtraRated.element));
+      render(this.#filmContainerCommented, this.#filmsSection.element);
+      render(this.#filmContainerExtraCommented, this.#filmContainerCommented.element);
+      this.topCommentedMovies.forEach((movie) => this.#renderMovie(movie, this.#filmContainerExtraCommented.element));
     }
-    render(this.#filmContainer, this.#filmList.element);
-    this.#renderMovies(movies.slice(0, Math.min(moviesCount, this.#renderedMoviesCount)));
-    if (moviesCount > this.#renderedMoviesCount) {
-      this.#renderLoadMoreButton();
-    }
-    render(this.#filmContainerRated, this.#filmsSection.element);
-    render(this.#filmContainerExtraRated, this.#filmContainerRated.element);
-    this.topRatedMovies.forEach((movie) => this.#renderMovie(movie, this.#filmContainerExtraRated.element));
-    render(this.#filmContainerCommented, this.#filmsSection.element);
-    render(this.#filmContainerExtraCommented, this.#filmContainerCommented.element);
-    this.topCommentedMovies.forEach((movie) => this.#renderMovie(movie, this.#filmContainerExtraCommented.element));
   };
 }

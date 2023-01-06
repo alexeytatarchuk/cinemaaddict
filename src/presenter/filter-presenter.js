@@ -14,7 +14,6 @@ export default class FilterPresenter {
     this.#filterContainer = filterContainer;
     this.#filterModel = filterModel;
     this.#moviesModel = moviesModel;
-
     this.#moviesModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
@@ -48,15 +47,14 @@ export default class FilterPresenter {
   init = () => {
     const filters = this.filters;
     const prevFilterComponent = this.#filterComponent;
-
-    this.#filterComponent = new FilterView(filters, this.#filterModel.filter);
+    this.#filterComponent = new FilterView(filters, this.#filterModel.filter, this.#filterModel.mode);
     this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
+    this.#filterComponent.setModeChangeHandler(this.#handleModeChange);
 
     if (prevFilterComponent === null) {
       render(this.#filterComponent, this.#filterContainer);
       return;
     }
-
     replace(this.#filterComponent, prevFilterComponent);
     remove(prevFilterComponent);
   };
@@ -70,5 +68,10 @@ export default class FilterPresenter {
       return;
     }
     this.#filterModel.setFilter('MINOR', filterType);
+  };
+
+  #handleModeChange = () => {
+    this.#filterModel.toggleMode();
+    this.init();
   };
 }

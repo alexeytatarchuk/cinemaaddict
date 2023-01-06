@@ -1,15 +1,15 @@
 import AbstractView from './abstract-view.js';
 
 /**
- * Абстрактный класс представления с состоянием
+ * Abstract view class with state
  */
 export default class AbstractStatefulView extends AbstractView {
-  /** @type {Object} Объект состояния */
+  /** @type {Object} State object  */
   _state = {};
 
   /**
-   * Метод для обновления состояния и перерисовки элемента
-   * @param {Object} update Объект с обновлённой частью состояния
+   * Method for updating the state and redrawing an element
+   * @param {Object} update The object with the updated part of the state
    */
   updateElement = (update) => {
     if (!update) {
@@ -22,7 +22,7 @@ export default class AbstractStatefulView extends AbstractView {
   };
 
   /**
-   * Метод для восстановления обработчиков после перерисовки элемента
+   * Method for restoring handlers after redrawing an element
    * @abstract
    */
   _restoreHandlers = () => {
@@ -30,14 +30,14 @@ export default class AbstractStatefulView extends AbstractView {
   };
 
   /**
-   * Метод для обновления состояния
-   * @param {Object} update Объект с обновлённой частью состояния
+   * Method for status updates
+   * @param {Object} update The object with the updated part of the state
    */
   _setState = (update) => {
     this._state = {...this._state, ...update};
   };
 
-  /** Метод для перерисовки элемента */
+  /** Method for redrawing an element */
   #rerenderElement = () => {
     const prevElement = this.element;
     const parent = prevElement.parentElement;
@@ -49,4 +49,8 @@ export default class AbstractStatefulView extends AbstractView {
 
     this._restoreHandlers();
   };
+
+  get template() {
+    return '';
+  }
 }
